@@ -71,6 +71,42 @@ app.post('/api/tasks', async (req, res) => {
     }
 });
 
+// Ruta PUT para actualizar una tarea
+app.put('/api/tasks/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { completed } = req.body;
+        // Buscamos la tarea por su ID y actualizamos el estado 'completed'
+        const updatedTask = await Task.findByIdAndUpdate(id, { completed }, { new: true });
+
+        if (!updatedTask) {
+            return res.status(404).json({ message: "Tarea no encontrada" });
+        }
+
+        res.json(updatedTask);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Ruta DELETE para eliminar una tarea
+app.delete('/api/tasks/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Buscamos la tarea por su ID y la eliminamos
+        const deletedTask = await Task.findByIdAndDelete(id);
+
+        if (!deletedTask) {
+            return res.status(404).json({ message: "Tarea no encontrada" });
+        }
+        
+        // Enviamos una respuesta de éxito
+        res.json({ message: "Tarea eliminada exitosamente" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // ======================================
 // Le decimos a la aplicación que escuche en el puerto
 // ======================================
